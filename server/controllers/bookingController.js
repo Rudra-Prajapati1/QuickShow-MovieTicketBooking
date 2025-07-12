@@ -1,7 +1,7 @@
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
 import { getAuth } from "@clerk/express";
-import Stripe from "stripe";
+// import Stripe from "stripe";
 
 //Function to check availability of selected seats for a movie
 const fetchSeatsAvailablity = async (showId, selectedSeats) => {
@@ -57,37 +57,37 @@ export const createBooking = async (req, res) => {
     await showData.save();
 
     // Stripe Gateway initialize
-    const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
+    // const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-    //Creating line items from stripe
-    const lineItems = [
-      {
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: showData.movie.title,
-          },
-          unit_amount: Math.floor(booking.amount * 100),
-        },
-        quantity: 1,
-      },
-    ];
+    // //Creating line items from stripe
+    // const lineItems = [
+    //   {
+    //     price_data: {
+    //       currency: "usd",
+    //       product_data: {
+    //         name: showData.movie.title,
+    //       },
+    //       unit_amount: Math.floor(booking.amount * 100),
+    //     },
+    //     quantity: 1,
+    //   },
+    // ];
 
-    const session = await stripeInstance.checkout.sessions.create({
-      success_url: `${origin}/loading/my-bookings`,
-      cancel_url: `${origin}/my-bookings`,
-      line_items: lineItems,
-      mode: "payment",
-      metadata: {
-        bookingId: booking._id.toString(),
-      },
-      expires_at: Math.floor(Date.now() / 1000) + 30 * 60, // Expires in 30 minutes
-    });
+    // const session = await stripeInstance.checkout.sessions.create({
+    //   success_url: `${origin}/loading/my-bookings`,
+    //   cancel_url: `${origin}/my-bookings`,
+    //   line_items: lineItems,
+    //   mode: "payment",
+    //   metadata: {
+    //     bookingId: booking._id.toString(),
+    //   },
+    //   expires_at: Math.floor(Date.now() / 1000) + 30 * 60, // Expires in 30 minutes
+    // });
 
-    booking.paymentLink = session.url;
-    await booking.save();
+    // booking.paymentLink = session.url;
+    // await booking.save();
 
-    res.json({ success: true, url: session.url });
+    // res.json({ success: true, url: session.url });
   } catch (error) {
     console.error("[createBooking]", error);
     res.json({ success: false, message: error.message });
