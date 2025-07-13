@@ -1,7 +1,7 @@
 import { Inngest } from "inngest";
 import User from "../models/User.js";
 
-export const inngest = new Inngest({ id: "movie-ticking-booking" });
+export const inngest = new Inngest({ id: "rjp-movie-ticking-booking" });
 
 //Inngest function to save user data in database
 const syncUserCreation = inngest.createFunction(
