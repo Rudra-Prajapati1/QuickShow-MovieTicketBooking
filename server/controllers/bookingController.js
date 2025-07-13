@@ -3,7 +3,7 @@ import Show from "../models/Show.js";
 import { getAuth } from "@clerk/express";
 import Stripe from "stripe";
 
-//Function to check availability of selected seats for a movie
+//Function to check availability of selected seats for the movie
 const fetchSeatsAvailablity = async (showId, selectedSeats) => {
   try {
     const showData = await Show.findById(showId);
