@@ -104,25 +104,25 @@ const sendBookingConfirmationEmail = inngest.createFunction(
       body: `
             <div style="font-family: Arial, sans-serif; line-height: 1.5;">
               <h2>Hey, ${booking.user.name}</h2>
-              <p>Your booking for <strong style="color: #F84565;">"${
+              <p>Your booking for <strong style="color: #F8456580;">"${
                 booking.show.movie.title
               }"</strong> is confirmed.</p>
               <p>
-                <strong>Date:</strong> ${new Date(
+                <strong>Date : </strong> ${new Date(
                   booking.show.showDateTime
                 ).toLocaleDateString("en-US", {
                   timeZone: "Asia/Kolkata",
                 })}<br/>
-                <strong>Time:</strong> ${new Date(
+                <strong>Time : </strong> ${new Date(
                   booking.show.showDateTime
                 ).toLocaleTimeString("en-US", { timeZone: "Asia/Kolkata" })}
               </p>
               <p>
-                <strong>Seats:</strong> ${booking.bookedSeats.join(", ")}<br/>
-                <strong>Total Tickets:</strong> ${
+                <strong>Seats : </strong> ${booking.bookedSeats.join(", ")}<br/>
+                <strong>Total Tickets : </strong> ${
                   booking.bookedSeats.length
                 }<br/>
-                <strong>Total Amount:</strong> ₹${booking.amount}
+                <strong>Total Amount : </strong> ₹${booking.amount}
               </p>
               <p>Enjoy the show! 🍿🥤</p>
               <p>Thanks for booking with us!<br/> - RJP's QuickShow Team</p>
