@@ -133,7 +133,7 @@ const SeatLayout = () => {
 
   useEffect(() => {
     if (selectedTime) {
-      setOccupiedSeats([]);
+      setSelectedSeats([]);
       fetchOccupiedSeats();
     }
   }, [selectedTime]);
