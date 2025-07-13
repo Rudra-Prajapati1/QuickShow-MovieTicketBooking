@@ -123,7 +123,7 @@ const sendBookingConfirmationEmail = inngest.createFunction(
                 <strong>Total Tickets : </strong> ${
                   booking.bookedSeats.length
                 }<br/>
-                <strong>Total Amount : </strong> ₹${booking.amount}
+                <strong>Total Amount : </strong> $${booking.amount}
               </p>
               <p>Enjoy the show! 🍿🥤</p>
               <p>Thanks for booking with us!<br/> - RJP's QuickShow Team</p>
