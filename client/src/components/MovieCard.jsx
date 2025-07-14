@@ -20,7 +20,7 @@ const MovieCard = ({ movie }) => {
           navigate(`/movies/${movie._id}`);
           scrollTo(0, 0);
         }}
-        className="rounded-lg h-52 w-full object-cover object-right-bottom cursor-pointer"
+        className="rounded-lg h-52 w-full object-cover cursor-pointer"
       />
 
       <p className="font-semibold mt-2 truncate">{movie.title}</p>

@@ -55,7 +55,7 @@ export const AppProvider = ({ children }) => {
 
   const fetchUpcomingMovies = async () => {
     try {
-      const { data } = await axios.get("api/show/upcoming");
+      const { data } = await axios.get("api/show/upcoming-movies");
 
       if (data.success) {
         setUpcomingMovies(data.movies);
@@ -85,6 +85,7 @@ export const AppProvider = ({ children }) => {
 
   useEffect(() => {
     fetchShows();
+    fetchUpcomingMovies();
   }, []);
 
   useEffect(() => {
@@ -106,6 +107,7 @@ export const AppProvider = ({ children }) => {
     fetchFavoriteMovies,
     imageBaseURL,
     upcomingMovies,
+    fetchUpcomingMovies,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

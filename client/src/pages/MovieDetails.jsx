@@ -127,9 +127,9 @@ const MovieDetails = () => {
       </div>
 
       <p className="text-xl font-medium mt-20">Movie Cast:</p>
-      <div className="overflow-x-auto no-scrollbar mt-8 pb-4">
+      <div className="overflow-x-auto mt-8 pb-4">
         <div className="flex items-center gap-4 w-max px-4">
-          {show.movie.casts.slice(0, 13).map((cast, index) => (
+          {show.movie.casts.slice(0, 16).map((cast, index) => (
             <div key={index} className="flex flex-col items-center text-center">
               <img
                 src={imageBaseURL + cast.profile_path}

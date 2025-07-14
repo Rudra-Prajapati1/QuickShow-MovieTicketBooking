@@ -7,7 +7,7 @@ const fetchAllNowPlayingMovies = async () => {
   const allMovies = [];
 
   const { data: firstPage } = await axios.get(
-    `https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1`,
+    `https://api.themoviedb.org/3/movie/now_playing`,
     {
       headers: {
         Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
@@ -30,7 +30,6 @@ const fetchAllNowPlayingMovies = async () => {
     );
     allMovies.push(...data.results);
   }
-  console.log(`Fetched total movies: ${allMovies.length}`);
   return allMovies;
 };
 
@@ -138,6 +137,51 @@ export const fetchShows = async (req, res) => {
 };
 
 //API to get all upcoming movies
+export const fetchUpcomingMovies = async (req, res) => {
+  try {
+    const upcomingMovies = [];
+
+    const { data: firstPage } = await axios.get(
+      `https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+        },
+      }
+    );
+
+    upcomingMovies.push(...firstPage.results);
+
+    const totalPages = Math.min(firstPage.total_pages, 5);
+
+    for (let page = 2; page <= totalPages; page++) {
+      const { data } = await axios.get(
+        `https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=${page}`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+          },
+        }
+      );
+      upcomingMovies.push(...data.results);
+    }
+
+    const today = new Date().toISOString().split("T")[0];
+
+    // Filter movies that are upcoming and non-adult
+    const movies = upcomingMovies.filter(
+      (movie) =>
+        movie.release_date > today &&
+        movie.adult === false &&
+        movie.original_language === "en"
+    );
+
+    res.json({ success: true, movies });
+  } catch (error) {
+    console.error("[fetchUpcomingMovies]", error);
+    res.json({ success: false, message: error.message });
+  }
+};
 
 //API to get a single show from the database
 export const fetchShow = async (req, res) => {

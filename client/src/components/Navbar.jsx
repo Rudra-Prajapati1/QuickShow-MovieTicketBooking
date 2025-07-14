@@ -63,7 +63,7 @@ const Navbar = () => {
             scrollTo(0, 0);
             setIsOpen(false);
           }}
-          to="/upcoming"
+          to="/upcoming-movies"
         >
           Upcoming
         </Link>

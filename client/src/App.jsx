@@ -18,6 +18,7 @@ import { useAppContext } from "./context/AppContext";
 import { SignIn } from "@clerk/clerk-react";
 import Loading from "./components/Loading";
 import Upcoming from "./pages/Upcoming";
+import UpcomingMovieDetails from "./pages/UpcomingMovieDetails";
 
 const App = () => {
   const isAdminRoute = useLocation().pathname.startsWith("/admin");
@@ -33,7 +34,8 @@ const App = () => {
         <Route path="/movies" element={<Movies />} />
         <Route path="/movies/:id" element={<MovieDetails />} />
         <Route path="/movies/:id/:date" element={<SeatLayout />} />
-        <Route path="/upcoming" element={<Upcoming />} />
+        <Route path="/upcoming-movies" element={<Upcoming />} />
+        <Route path="/upcoming-movies/:id" element={<UpcomingMovieDetails />} />
         <Route path="/my-bookings" element={<MyBooking />} />
         <Route path="/loading/:nextUrl" element={<Loading />} />
         <Route path="/favorite" element={<Favorite />} />
