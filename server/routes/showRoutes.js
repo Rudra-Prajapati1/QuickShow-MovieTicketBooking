@@ -13,5 +13,6 @@ showRouter.get("/now-playing", protectAdmin, fetchNowPlayingMovies);
 showRouter.post("/add", protectAdmin, addShow);
 showRouter.get("/all", fetchShows);
 showRouter.get("/:movieId", fetchShow);
+// showRouter.get("/upcoming", )
 
 export default showRouter;

@@ -3,18 +3,42 @@ import Movie from "../models/Movie.js";
 import Show from "../models/Show.js";
 import { inngest } from "../inngest/index.js";
 
+const fetchAllNowPlayingMovies = async () => {
+  const allMovies = [];
+
+  const { data: firstPage } = await axios.get(
+    `https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+      },
+    }
+  );
+
+  allMovies.push(...firstPage.results);
+
+  const totalPages = Math.min(firstPage.total_pages, 5); // up to 5 pages
+
+  for (let page = 2; page <= totalPages; page++) {
+    const { data } = await axios.get(
+      `https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=${page}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+        },
+      }
+    );
+    allMovies.push(...data.results);
+  }
+  console.log(`Fetched total movies: ${allMovies.length}`);
+  return allMovies;
+};
+
 //API to get Now-Playing Movies
 export const fetchNowPlayingMovies = async (req, res) => {
   try {
-    const { data } = await axios.get(
-      "https://api.themoviedb.org/3/movie/now_playing",
-      {
-        headers: { Authorization: `Bearer ${process.env.TMDB_API_KEY}` },
-      }
-    );
-
-    const movies = data.results;
-    res.json({ success: true, movies: movies });
+    const movies = await fetchAllNowPlayingMovies();
+    res.json({ success: true, movies });
   } catch (error) {
     console.error("[fetchNowPlayingMovies]", error);
     res.json({ success: false, message: error.message });
@@ -112,6 +136,8 @@ export const fetchShows = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+//API to get all upcoming movies
 
 //API to get a single show from the database
 export const fetchShow = async (req, res) => {

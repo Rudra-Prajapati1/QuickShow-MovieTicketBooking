@@ -63,9 +63,9 @@ const Navbar = () => {
             scrollTo(0, 0);
             setIsOpen(false);
           }}
-          to="/"
+          to="/upcoming"
         >
-          Releases
+          Upcoming
         </Link>
         <Link
           onClick={() => {

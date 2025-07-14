@@ -11,6 +11,7 @@ export const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [shows, setShows] = useState([]);
+  const [upcomingMovies, setUpcomingMovies] = useState([]);
   const [favoriteMovies, setFavoriteMovies] = useState([]);
 
   const imageBaseURL = import.meta.env.VITE_TMDB_IMAGE_BASE_URL;
@@ -52,6 +53,20 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  const fetchUpcomingMovies = async () => {
+    try {
+      const { data } = await axios.get("api/show/upcoming");
+
+      if (data.success) {
+        setUpcomingMovies(data.movies);
+      } else {
+        toast.error("[fetchUpcomingMovies]", data.message);
+      }
+    } catch (error) {
+      console.error("[fetchUpcomingMovies]", error);
+    }
+  };
+
   const fetchFavoriteMovies = async () => {
     try {
       const { data } = await axios.get("/api/user/favorites", {
@@ -90,6 +105,7 @@ export const AppProvider = ({ children }) => {
     favoriteMovies,
     fetchFavoriteMovies,
     imageBaseURL,
+    upcomingMovies,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
