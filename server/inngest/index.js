@@ -4,6 +4,7 @@ import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
 import sendEmail from "../configs/nodeMailer.js";
 import { set } from "mongoose";
+import Movie from "../models/Movie.js";
 
 export const inngest = new Inngest({ id: "rjp-movie-ticking-booking" });
 
@@ -256,6 +257,51 @@ const sendNewShowNotifications = inngest.createFunction(
   }
 );
 
+const addDailyMovieShows = inngest.createFunction(
+  { id: "add-multiple-daily-shows" },
+  { cron: "30 0 * * *" },
+
+  async ({ step }) => {
+    const movies = await step.run("fetch-all-movies", async () => {
+      return await Movie.find({});
+    });
+
+    const showHours = [12, 15, 18, 21];
+    let addedCount = 0;
+
+    for (const movie of movies) {
+      for (const hour of showHours) {
+        const showTime = new Date();
+        showTime.setHours(hour, 0, 0, 0);
+
+        const exists = await Show.findOne({
+          movie: movie._id,
+          showDateTime: {
+            $gte: new Date(showTime.getTime() - 1000 * 60), // 1 min before
+            $lte: new Date(showTime.getTime() + 1000 * 60), // 1 min after
+          },
+        });
+
+        if (exists) continue;
+
+        await Show.create({
+          movie: movie._id,
+          showDateTime: showTime,
+          showPrice: 10,
+          occupiedSeats: {},
+        });
+
+        addedCount++;
+      }
+    }
+    return {
+      success: true,
+      added: addedCount,
+      message: `${addedCount} show(s) created successfully.`,
+    };
+  }
+);
+
 export const functions = [
   syncUserCreation,
   syncUserDeletion,
@@ -264,4 +310,5 @@ export const functions = [
   sendBookingConfirmationEmail,
   sendShowReminders,
   sendNewShowNotifications,
+  addDailyMovieShows,
 ];
