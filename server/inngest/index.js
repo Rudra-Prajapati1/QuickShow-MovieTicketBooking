@@ -265,9 +265,6 @@ const addDailyMovieShows = inngest.createFunction(
   { cron: "30 0 * * *" }, // Runs daily at 12:30 AM
 
   async ({ step }) => {
-    // FIX: The main cause of the "Payload Too Large" error.
-    // We only need the movie's _id to create a new show, so we select only that field.
-    // This dramatically reduces the size of the data fetched from the database.
     const movies = await step.run("fetch-all-movies", async () => {
       return await Movie.find({}).select("_id").lean();
     });

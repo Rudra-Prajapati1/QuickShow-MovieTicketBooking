@@ -12,7 +12,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="fixed top-0 left-0 z-10 w-full flex items-center justify-between px-6 md:px-16 lg:px-36 py-5">
+    <div className="fixed top-0 left-0 z-50 w-full flex items-center justify-between px-6 md:px-16 xl:px-36 py-5">
       <Link to="/" className="max-md:flex-1">
         <img src={assets.logo} alt="Logo" className="w-36 h-auto" />
       </Link>
@@ -104,7 +104,7 @@ const Navbar = () => {
       </div>
 
       <MenuIcon
-        className="max-md:ml-4 md:hidden w-8 h-8 cursor-pointer"
+        className="max-md:ml-4 md:hidden w-8 h-8 cursor-pointer "
         onClick={() => {
           setIsOpen(!isOpen);
         }}

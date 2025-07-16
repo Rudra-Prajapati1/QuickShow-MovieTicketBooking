@@ -10,8 +10,10 @@ export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [shows, setShows] = useState([]);
   const [upcomingMovies, setUpcomingMovies] = useState([]);
+  const [trailer, setTrailer] = useState({});
   const [favoriteMovies, setFavoriteMovies] = useState([]);
 
   const imageBaseURL = import.meta.env.VITE_TMDB_IMAGE_BASE_URL;
@@ -19,9 +21,9 @@ export const AppProvider = ({ children }) => {
   const { user } = useUser();
   const { getToken } = useAuth();
   const location = useLocation();
-
   const navigate = useNavigate();
 
+  // Fetch admin status
   const fetchIsAdmin = async () => {
     try {
       const { data } = await axios.get("api/admin/is-admin", {
@@ -32,7 +34,7 @@ export const AppProvider = ({ children }) => {
 
       if (!data.isAdmin && location.pathname.startsWith("/admin")) {
         navigate("/");
-        toast.error("Your are not authorized to access the admin dashboard");
+        toast.error("You are not authorized to access the admin dashboard");
       }
     } catch (error) {
       console.error("[fetchIsAdmin]", error);
@@ -42,7 +44,6 @@ export const AppProvider = ({ children }) => {
   const fetchShows = async () => {
     try {
       const { data } = await axios.get("/api/show/all");
-
       if (data.success) {
         setShows(data.shows);
       } else {
@@ -56,7 +57,6 @@ export const AppProvider = ({ children }) => {
   const fetchUpcomingMovies = async () => {
     try {
       const { data } = await axios.get("api/show/upcoming-movies");
-
       if (data.success) {
         setUpcomingMovies(data.movies);
       } else {
@@ -65,6 +65,29 @@ export const AppProvider = ({ children }) => {
     } catch (error) {
       console.error("[fetchUpcomingMovies]", error);
     }
+  };
+
+  const fetchAllTrailers = async () => {
+    if (upcomingMovies.length === 0) return;
+
+    const trailerPromises = upcomingMovies.map((movie) =>
+      axios.get(`api/show/trailer/${movie.id}`)
+    );
+
+    const responses = await Promise.allSettled(trailerPromises);
+    const trailersMap = {};
+
+    responses.forEach((res, index) => {
+      if (res.status === "fulfilled" && res.value.data.success) {
+        const movieId = upcomingMovies[index].id;
+        trailersMap[movieId] = {
+          url: res.value.data.trailer_url,
+          key: res.value.data.video_key,
+        };
+      }
+    });
+
+    setTrailer(trailersMap);
   };
 
   const fetchFavoriteMovies = async () => {
@@ -83,11 +106,28 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  // Initial Data Load
   useEffect(() => {
-    fetchShows();
-    fetchUpcomingMovies();
+    const loadAll = async () => {
+      try {
+        setLoading(true);
+        await Promise.all([fetchShows(), fetchUpcomingMovies()]);
+      } catch (error) {
+        console.error("Initial Load Error", error);
+        toast.error("Error loading movies.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadAll();
   }, []);
 
+  // Load trailers when upcomingMovies change
+  useEffect(() => {
+    fetchAllTrailers();
+  }, [upcomingMovies]);
+
+  // Load user-related data
   useEffect(() => {
     if (user) {
       fetchIsAdmin();
@@ -108,11 +148,11 @@ export const AppProvider = ({ children }) => {
     imageBaseURL,
     upcomingMovies,
     fetchUpcomingMovies,
+    loading,
+    trailer,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
-export const useAppContext = () => {
-  return useContext(AppContext);
-};
+export const useAppContext = () => useContext(AppContext);

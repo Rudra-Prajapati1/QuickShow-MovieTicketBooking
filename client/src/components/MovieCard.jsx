@@ -11,7 +11,7 @@ const MovieCard = ({ movie }) => {
   return (
     <div
       className="flex flex-col justify-between p-3 bg-gray-800 rounded-2xl 
-    hover:-translate-y-1 transition duration-300 w-66"
+    hover:-translate-y-1 transition duration-300 w-74 lg:w-62 xl:w-66"
     >
       <img
         src={imageBaseURL + movie.backdrop_path}
@@ -25,13 +25,13 @@ const MovieCard = ({ movie }) => {
 
       <p className="font-semibold mt-2 truncate">{movie.title}</p>
 
-      <p className="text-sm text-gray-400 mt-2">
+      <p className="text-sm text-gray-400 mt-2 break-all">
         {new Date(movie.release_date).getFullYear()} ●{" "}
         {movie.genres
           .slice(0, 2)
           .map((genre) => genre.name)
           .join(" | ")}{" "}
-        ● {timeFormat(movie.runtime)}
+        <span className="whitespace-nowrap">● {timeFormat(movie.runtime)}</span>
       </p>
 
       <div className="flex items-center justify-between mt-4 pb-3">

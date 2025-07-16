@@ -10,18 +10,26 @@ const Footer = () => {
         <div className="md:max-w-96">
           <img className="w-36 h-auto" src={assets.logo} alt="logo" />
           <p className="mt-6 text-sm">
-            QuickShow is an online movie ticket booking platform. <br /> Created
-            By{" "}
-            <span className="font-bold underline">Rudra Jitesh Prajapati</span>
+            QuickShow is an online movie ticket booking platform.
             <br />
-            Created with Youtube Tutorial:{" "}
-            <a
-              href="https://youtu.be/Pez37wmUaQM?si=Jhax9uSQg4e_nTse"
-              className="underline italic font-bold"
-            >
-              GreatStack
-            </a>{" "}
-            .
+            <span>
+              Created & Inspired From Youtube Tutorial:{" "}
+              <a
+                href="https://youtu.be/Pez37wmUaQM?si=Jhax9uSQg4e_nTse"
+                className="underline italic font-bold"
+              >
+                GreatStack
+              </a>{" "}
+              .
+            </span>{" "}
+            <br />
+            <span>
+              {" "}
+              Created & Modified By{" "}
+              <span className="font-bold underline">
+                Rudra Jitesh Prajapati
+              </span>
+            </span>{" "}
           </p>
           <div className="flex items-center gap-2 mt-4">
             <img

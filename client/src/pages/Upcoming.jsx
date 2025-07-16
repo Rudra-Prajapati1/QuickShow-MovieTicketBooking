@@ -2,16 +2,22 @@ import React from "react";
 import BlurCircle from "../components/BlurCircle";
 import { useAppContext } from "../context/AppContext";
 import UpcomingMovieCard from "../components/UpcomingMovieCard";
+import Loading from "../components/Loading";
 
 const Upcoming = () => {
-  const { upcomingMovies } = useAppContext();
+  const { upcomingMovies, loading } = useAppContext();
+
+  if (loading) {
+    <Loading />;
+  }
+
   return upcomingMovies.length > 0 ? (
     <div className="relative my-40 mb-60 px-6 md:px-16 lg:px-40 xl:px-44 overflow-hidden min-h-[80vh]">
       <BlurCircle top="100px" />
       <BlurCircle bottom="0" right="100px" />
 
       <h1 className="font-medium text-xl my-4">Upcoming Movies</h1>
-      <div className="flex flex-wrap max-sm:justify-center gap-9">
+      <div className="flex flex-wrap max-sm:justify-center gap-9 max-md:mt-10">
         {upcomingMovies.map((movie) => (
           <UpcomingMovieCard movie={movie} key={movie.id} />
         ))}

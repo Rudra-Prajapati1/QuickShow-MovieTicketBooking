@@ -3,6 +3,59 @@ import Movie from "../models/Movie.js";
 import Show from "../models/Show.js";
 import { inngest } from "../inngest/index.js";
 
+export const getMovieTrailer = async (req, res) => {
+  try {
+    // Get movie ID from the request parameters, e.g., /api/trailer/1287536
+    const { movieId } = req.params;
+
+    // Corrected API call with the api_key as a query parameter
+    const { data } = await axios.get(
+      `https://api.themoviedb.org/3/movie/${movieId}/videos`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+        },
+      }
+    );
+
+    // --- Improvement: Find the official trailer ---
+    const trailer = data.results.find(
+      (video) =>
+        video.site === "YouTube" &&
+        video.type === "Trailer" &&
+        video.official === true
+    );
+
+    // If no official trailer, find any trailer
+    const anyTrailer = data.results.find(
+      (video) => video.site === "YouTube" && video.type === "Trailer"
+    );
+
+    const videoToSend = trailer || anyTrailer; // Prioritize the official one
+
+    if (videoToSend) {
+      // Send back just the YouTube key or the full URL
+      const trailerUrl = `https://www.youtube.com/watch?v=${videoToSend.key}`;
+      res
+        .status(200)
+        .json({
+          success: true,
+          trailer_url: trailerUrl,
+          video_key: videoToSend.key,
+        });
+    } else {
+      // No trailer found
+      res
+        .status(404)
+        .json({ success: false, message: "No trailer found for this movie." });
+    }
+  } catch (error) {
+    // --- Proper Error Handling ---
+    console.error("[GET MOVIE TRAILER]", error.message);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
 const fetchAllNowPlayingMovies = async () => {
   const allMovies = [];
 
