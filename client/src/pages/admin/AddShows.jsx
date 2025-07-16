@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { dummyShowsData } from "../../assets/assets";
 import Loading from "../../components/Loading";
 import Title from "../../components/admin/Title";
 import { CheckIcon, DeleteIcon, StarIcon } from "lucide-react";
 import kConverter from "../../lib/kConverter";
 import toast from "react-hot-toast";
 import { useAppContext } from "../../context/AppContext";
+import isoTimeFormat from "../../lib/isoTimeFormat";
 
 const AddShows = () => {
   const currency = import.meta.env.VITE_CURRENCY;
@@ -73,8 +73,6 @@ const AddShows = () => {
 
   const handleSubmit = async () => {
     try {
-      setAddingShow(true);
-
       if (
         !selectedMovie ||
         Object.keys(dateTimeSelection).length === 0 ||
@@ -82,6 +80,8 @@ const AddShows = () => {
       ) {
         return toast("Missing required fields");
       }
+
+      setAddingShow(true);
 
       const showsInput = Object.entries(dateTimeSelection).map(
         ([date, time]) => ({ date, time })
@@ -212,7 +212,7 @@ const AddShows = () => {
                       key={time}
                       className="border border-primary px-2 pl-1 flex items-center rounded"
                     >
-                      <span>{time}</span>
+                      <span>{isoTimeFormat(`${date}T${time}`)}</span>
                       <DeleteIcon
                         onClick={() => handleRemoveTime(date, time)}
                         width={15}

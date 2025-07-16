@@ -1,12 +1,13 @@
 const isoTimeFormat = (dateTime) => {
   const date = new Date(dateTime);
-  const localTime = date.toLocaleTimeString("en-US", {
+  if (isNaN(date)) return "Invalid Time";
+
+  return date.toLocaleTimeString("en-IN", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
+    timeZone: "Asia/Kolkata", // Force IST
   });
-
-  return localTime;
 };
 
 export default isoTimeFormat;

@@ -56,29 +56,32 @@ const syncUserUpdation = inngest.createFunction(
   }
 );
 
-//Inngest function to cancel booking and release seats of show after 10 minutes of booking created if payment is not made
+// Inngest function to cancel booking and release seats of show after 10 minutes of booking created if payment is not made
 const releaseSeatsAndDeleteBooking = inngest.createFunction(
   { id: "release-seats-delete-booking" },
   { event: "app/checkpayment" },
   async ({ event, step }) => {
-    const tenMinutesLater = new Date(Date.now() + 10 * 60 * 1000);
-
-    await step.sleepUntil("wait-for-10-minutes", tenMinutesLater);
+    // Wait for 10 minutes before checking for payment
+    await step.sleep("wait-for-10-minutes", "10m");
 
     await step.run("check-payment-status", async () => {
       const bookingId = event.data.bookingId;
       const booking = await Booking.findById(bookingId);
 
-      // If payment is not made, release seats and delete booking
-      if (!booking.isPaid) {
+      // If booking still exists and payment is not made, release seats and delete booking
+      if (booking && !booking.isPaid) {
         const show = await Show.findById(booking.show);
 
-        booking.bookedSeats.forEach((seat) => {
-          delete show.occupiedSeats[seat];
-        });
+        // This check is important in case the show was deleted for some reason
+        if (show) {
+          booking.bookedSeats.forEach((seat) => {
+            delete show.occupiedSeats[seat];
+          });
 
-        show.markModified("occupiedSeats");
-        await show.save();
+          show.markModified("occupiedSeats");
+          await show.save();
+        }
+
         await Booking.findByIdAndDelete(booking._id);
       }
     });
@@ -180,7 +183,7 @@ const sendShowReminders = inngest.createFunction(
     }
 
     //Sent reminder emails
-    const results = await set.run("send-all-reminders", async () => {
+    const results = await step.run("send-all-reminders", async () => {
       return await Promise.allSettled(
         reminderTasks.map((task) =>
           sendEmail({
@@ -239,7 +242,7 @@ const sendNewShowNotifications = inngest.createFunction(
         <div style="font-family: Arial, sans-serif; padding: 20px">
           <h2>Hey, ${userName}</h2>
           <p>We've have added a new show to our library:</p>
-          <h3 style="#F84565;">"${movieTitle}"</h3>
+          <h3 style="color: #F84565;">"${movieTitle}"</h3>
           <p>Visit our website</p>
           <br />
           <p>Thanks, <br/> RJP's QuickShow Team</p>
@@ -259,41 +262,52 @@ const sendNewShowNotifications = inngest.createFunction(
 
 const addDailyMovieShows = inngest.createFunction(
   { id: "add-multiple-daily-shows" },
-  { cron: "30 0 * * *" },
+  { cron: "30 0 * * *" }, // Runs daily at 12:30 AM
 
   async ({ step }) => {
+    // FIX: The main cause of the "Payload Too Large" error.
+    // We only need the movie's _id to create a new show, so we select only that field.
+    // This dramatically reduces the size of the data fetched from the database.
     const movies = await step.run("fetch-all-movies", async () => {
-      return await Movie.find({});
+      return await Movie.find({}).select("_id").lean();
     });
 
-    const showHours = [12, 15, 18, 21];
+    const showHours = [12, 15, 18, 21]; // 12 PM, 3 PM, 6 PM, 9 PM
     let addedCount = 0;
+
+    const showsToCreate = [];
 
     for (const movie of movies) {
       for (const hour of showHours) {
         const showTime = new Date();
+        // Set to today's date at the specified hour in the local timezone
         showTime.setHours(hour, 0, 0, 0);
 
+        // Check if a show for this movie at this time already exists
         const exists = await Show.findOne({
           movie: movie._id,
-          showDateTime: {
-            $gte: new Date(showTime.getTime() - 1000 * 60), // 1 min before
-            $lte: new Date(showTime.getTime() + 1000 * 60), // 1 min after
-          },
+          showDateTime: showTime,
         });
 
         if (exists) continue;
 
-        await Show.create({
+        // Prepare show data for creation
+        showsToCreate.push({
           movie: movie._id,
           showDateTime: showTime,
-          showPrice: 10,
+          showPrice: 10, // Example price
           occupiedSeats: {},
         });
-
-        addedCount++;
       }
     }
+
+    if (showsToCreate.length > 0) {
+      await step.run("create-new-shows", async () => {
+        await Show.insertMany(showsToCreate);
+      });
+      addedCount = showsToCreate.length;
+    }
+
     return {
       success: true,
       added: addedCount,
