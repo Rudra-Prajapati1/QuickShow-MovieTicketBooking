@@ -170,7 +170,7 @@ const sendShowReminders = inngest.createFunction(
             userEmail: user.email,
             userName: user.name,
             movieTitle: show.movie.title,
-            showTime: show.showTime,
+            showTime: show.showDateTime,
           });
         }
       }

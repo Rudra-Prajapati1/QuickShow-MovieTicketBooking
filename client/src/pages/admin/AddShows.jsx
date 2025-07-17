@@ -187,6 +187,10 @@ const AddShows = () => {
             type="datetime-local"
             value={dateTimeInput}
             onChange={(e) => setDateTimeInput(e.target.value)}
+            // Add this 'min' attribute
+            min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+              .toISOString()
+              .slice(0, 16)}
             className="outline-none rounded-md"
           />
           <button

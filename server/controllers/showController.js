@@ -36,13 +36,11 @@ export const getMovieTrailer = async (req, res) => {
     if (videoToSend) {
       // Send back just the YouTube key or the full URL
       const trailerUrl = `https://www.youtube.com/watch?v=${videoToSend.key}`;
-      res
-        .status(200)
-        .json({
-          success: true,
-          trailer_url: trailerUrl,
-          video_key: videoToSend.key,
-        });
+      res.status(200).json({
+        success: true,
+        trailer_url: trailerUrl,
+        video_key: videoToSend.key,
+      });
     } else {
       // No trailer found
       res
@@ -105,7 +103,7 @@ export const addShow = async (req, res) => {
     let movie = await Movie.findById(movieId);
 
     if (!movie) {
-      //Fetch movie details and credits from TMDB API
+      // Fetch movie details and credits from TMDB API
       const [movieDetailsResponse, movieCreditsResponse] = await Promise.all([
         axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, {
           headers: { Authorization: `Bearer ${process.env.TMDB_API_KEY}` },
@@ -134,19 +132,22 @@ export const addShow = async (req, res) => {
         runtime: movieDetailsData.runtime,
       };
 
-      //Add to movie to DB
+      // Add movie to DB
       movie = await Movie.create(movieDetails);
     }
+    const { fromZonedTime } = await import("date-fns-tz");
 
     const showsToCreate = [];
+    const timeZone = "Asia/Kolkata";
 
     showsInput.forEach((show) => {
       const showDate = show.date;
       show.time.forEach((time) => {
         const dateTimeString = `${showDate}T${time}`;
+        const showDateTimeUTC = fromZonedTime(dateTimeString, timeZone);
         showsToCreate.push({
           movie: movieId,
-          showDateTime: new Date(dateTimeString),
+          showDateTime: showDateTimeUTC,
           showPrice,
           occupiedSeats: {},
         });
@@ -157,7 +158,7 @@ export const addShow = async (req, res) => {
       await Show.insertMany(showsToCreate);
     }
 
-    //Trigger inngest event
+    // Trigger inngest event
     await inngest.send({
       name: "app/show.added",
       data: {
