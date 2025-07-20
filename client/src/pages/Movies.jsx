@@ -7,11 +7,11 @@ import Loading from "../components/Loading";
 const Movies = () => {
   const { shows, loading } = useAppContext();
 
-  if (loading) {
+  if (loading || shows.length === 0) {
     return <Loading />;
   }
 
-  return shows.length > 0 ? (
+  return (
     <div className="relative my-40 mb-60 px-6 md:px-16 lg:px-40 xl:px-44 overflow-hidden min-h-[80vh]">
       <BlurCircle top="150px" left="0" />
       <BlurCircle bottom="110px" right="100px" />
@@ -23,11 +23,7 @@ const Movies = () => {
         ))}
       </div>
     </div>
-  ) : (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-3xl font-bold text-center">No movies available</h1>
-    </div>
-  );
+  ) 
 };
 
 export default Movies;

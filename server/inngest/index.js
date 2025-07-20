@@ -3,8 +3,8 @@ import User from "../models/User.js";
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
 import sendEmail from "../configs/nodeMailer.js";
-import { set } from "mongoose";
 import Movie from "../models/Movie.js";
+const { fromZonedTime } = await import("date-fns-tz");
 
 export const inngest = new Inngest({ id: "rjp-movie-ticking-booking" });
 
@@ -262,37 +262,46 @@ const sendNewShowNotifications = inngest.createFunction(
 
 const addDailyMovieShows = inngest.createFunction(
   { id: "add-multiple-daily-shows" },
-  { cron: "30 0 * * *" }, // Runs daily at 12:30 AM
+  { cron: "30 0 * * *" }, // Runs daily at 12:30 AM IST
 
   async ({ step }) => {
     const movies = await step.run("fetch-all-movies", async () => {
       return await Movie.find({}).select("_id").lean();
     });
 
-    const showHours = [12, 15, 18, 21]; // 12 PM, 3 PM, 6 PM, 9 PM
-    let addedCount = 0;
+    const showHours = [12, 15, 18, 21]; // 12 PM, 3 PM, 6 PM, 9 PM IST
+    const timeZone = "Asia/Kolkata";
 
+    let addedCount = 0;
     const showsToCreate = [];
 
     for (const movie of movies) {
       for (const hour of showHours) {
-        const showTime = new Date();
-        // Set to today's date at the specified hour in the local timezone
-        showTime.setHours(hour, 0, 0, 0);
+        const now = new Date();
+        const istDate = new Intl.DateTimeFormat("en-CA", {
+          timeZone,
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        }).format(now); // e.g., "2025-07-17"
 
-        // Check if a show for this movie at this time already exists
+        const dateTimeString = `${istDate}T${String(hour).padStart(
+          2,
+          "0"
+        )}:00:00`;
+        const showTimeUtc = fromZonedTime(dateTimeString, timeZone);
+
         const exists = await Show.findOne({
           movie: movie._id,
-          showDateTime: showTime,
+          showDateTime: showTimeUtc,
         });
 
         if (exists) continue;
 
-        // Prepare show data for creation
         showsToCreate.push({
           movie: movie._id,
-          showDateTime: showTime,
-          showPrice: 10, // Example price
+          showDateTime: showTimeUtc,
+          showPrice: 10,
           occupiedSeats: {},
         });
       }

@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { dummyDateTimeData, dummyShowsData } from "../assets/assets";
 import BlurCircle from "../components/BlurCircle";
-import { Heart, PlayCircleIcon, StarIcon } from "lucide-react";
+import { Heart, HeartIcon, PlayCircleIcon, StarIcon } from "lucide-react";
 import timeFormat from "../lib/timeFormat";
 import DateSelect from "../components/DateSelect";
 import MovieCard from "../components/MovieCard";
 import Loading from "../components/Loading";
 import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
+import TrailerSection from "../components/TrailerSection";
 
 const MovieDetails = () => {
   const navigate = useNavigate();
@@ -77,8 +78,20 @@ const MovieDetails = () => {
         <div className="relative flex flex-col gap-3">
           <BlurCircle top="-100px" left="-100px" />
           <p className="text-primary">ENGLISH</p>
-          <h1 className="text-4xl font-semibold max-w-96 text-balance">
+          <h1 className="text-4xl font-semibold max-w-96 text-balance flex w-full justify-between items-center">
             {show.movie.title}
+            <button
+              onClick={handleFavorite}
+              className="bg-gray-700 p-2.5 rounded-full transition cursor-pointer active:scale-95 lg:hidden"
+            >
+              <Heart
+                className={`w-7 h-7 ${
+                  favoriteMovies.find((movie) => movie._id === id)
+                    ? "fill-primary text-primary"
+                    : ""
+                }`}
+              />
+            </button>
           </h1>
           <div className="flex items-center gap-2 text-gray-300">
             <StarIcon className="w-5 h-5 text-primary fill-primary" />
@@ -96,13 +109,14 @@ const MovieDetails = () => {
           </p>
 
           <div className="flex items-center flex-wrap gap-4 mt-4">
-            <button
+            <a
+              href="#trailer"
               className="flex items-center gap-2 px-7 py-3 text-sm bg-gray-800 hover:bg-gray-900 transition 
               rounded-md font-medium cursor-pointer active:scale-95"
             >
               <PlayCircleIcon className="w-5 h-5" />
               Watch Trailer
-            </button>
+            </a>
             <a
               href="#dateSelect"
               className="px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-md font-medium
@@ -112,7 +126,7 @@ const MovieDetails = () => {
             </a>
             <button
               onClick={handleFavorite}
-              className="bg-gray-700 p-2.5 rounded-full transition cursor-pointer active:scale-95"
+              className="bg-gray-700 p-2.5 rounded-full transition cursor-pointer active:scale-95 max-md:hidden"
             >
               <Heart
                 className={`w-5 h-5 ${
@@ -143,6 +157,8 @@ const MovieDetails = () => {
       </div>
 
       <DateSelect dateTime={show.dateTime} id={id} />
+
+      <TrailerSection id={id} />
 
       <p className="text-xl font-medium mt-20 mb-8">You May Also Like</p>
       <div className="flex flex-wrap max-sm:justify-center gap-9">

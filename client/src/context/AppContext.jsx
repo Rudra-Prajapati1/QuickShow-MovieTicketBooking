@@ -23,7 +23,12 @@ export const AppProvider = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Fetch admin status
+  // Reusable error handler
+  const handleError = (prefix, error, userMessage) => {
+    console.error(`[${prefix}]`, error);
+    if (userMessage) toast.error(userMessage);
+  };
+
   const fetchIsAdmin = async () => {
     try {
       const { data } = await axios.get("api/admin/is-admin", {
@@ -37,7 +42,7 @@ export const AppProvider = ({ children }) => {
         toast.error("You are not authorized to access the admin dashboard");
       }
     } catch (error) {
-      console.error("[fetchIsAdmin]", error);
+      handleError("fetchIsAdmin", error);
     }
   };
 
@@ -47,39 +52,44 @@ export const AppProvider = ({ children }) => {
       if (data.success) {
         setShows(data.shows);
       } else {
-        toast.error("[fetchShows]", data.message);
+        toast.error(data.message || "Failed to load shows");
       }
     } catch (error) {
-      console.error("[fetchShows]", error);
+      handleError("fetchShows", error);
     }
   };
 
   const fetchUpcomingMovies = async () => {
     try {
-      const { data } = await axios.get("api/show/upcoming-movies");
+      const { data } = await axios.get("/api/show/upcoming-movies");
       if (data.success) {
         setUpcomingMovies(data.movies);
       } else {
-        toast.error("[fetchUpcomingMovies]", data.message);
+        toast.error(data.message || "Failed to load upcoming movies");
       }
     } catch (error) {
-      console.error("[fetchUpcomingMovies]", error);
+      handleError("fetchUpcomingMovies", error);
     }
   };
 
   const fetchAllTrailers = async () => {
-    if (upcomingMovies.length === 0) return;
+    if (!upcomingMovies.length) return;
 
-    const trailerPromises = upcomingMovies.map((movie) =>
-      axios.get(`api/show/trailer/${movie.id}`)
+    const trailersMap = { ...trailer }; // Don't overwrite existing trailers
+
+    const newMovies = upcomingMovies.filter((movie) => !trailersMap[movie.id]);
+
+    if (!newMovies.length) return; // No new trailers to fetch
+
+    const trailerRequests = newMovies.map((movie) =>
+      axios.get(`/api/show/trailer/${movie.id}`)
     );
 
-    const responses = await Promise.allSettled(trailerPromises);
-    const trailersMap = {};
+    const responses = await Promise.allSettled(trailerRequests);
 
     responses.forEach((res, index) => {
       if (res.status === "fulfilled" && res.value.data.success) {
-        const movieId = upcomingMovies[index].id;
+        const movieId = newMovies[index].id;
         trailersMap[movieId] = {
           url: res.value.data.trailer_url,
           key: res.value.data.video_key,
@@ -99,35 +109,35 @@ export const AppProvider = ({ children }) => {
       if (data.success) {
         setFavoriteMovies(data.movies);
       } else {
-        toast.error("[fetchFavoriteMovies]", data.message);
+        toast.error(data.message || "Failed to load favorites");
       }
     } catch (error) {
-      console.error("[fetchFavoriteMovies]", error);
+      handleError("fetchFavoriteMovies", error);
     }
   };
 
-  // Initial Data Load
+  // Load shows and upcoming movies once
   useEffect(() => {
-    const loadAll = async () => {
+    const loadInitialData = async () => {
       try {
         setLoading(true);
         await Promise.all([fetchShows(), fetchUpcomingMovies()]);
       } catch (error) {
-        console.error("Initial Load Error", error);
-        toast.error("Error loading movies.");
+        handleError("InitialLoad", error, "Error loading movies.");
       } finally {
         setLoading(false);
       }
     };
-    loadAll();
+
+    loadInitialData();
   }, []);
 
-  // Load trailers when upcomingMovies change
+  // Fetch trailers when upcoming movies change
   useEffect(() => {
     fetchAllTrailers();
   }, [upcomingMovies]);
 
-  // Load user-related data
+  // Fetch user-based data
   useEffect(() => {
     if (user) {
       fetchIsAdmin();

@@ -6,6 +6,7 @@ import BlurCircle from "../components/BlurCircle";
 import { useEffect } from "react";
 import { genreMap } from "../lib/genreMap";
 import { PlayCircleIcon } from "lucide-react";
+import TrailerSection from "../components/TrailerSection";
 
 const UpcomingMovieDetails = () => {
   const {
@@ -73,6 +74,7 @@ const UpcomingMovieDetails = () => {
           </div>
         </div>
       </div>
+      <TrailerSection id={id} />
     </div>
   ) : (
     <Loading />
