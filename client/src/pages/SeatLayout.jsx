@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { assets, dummyDateTimeData, dummyShowsData } from "../assets/assets";
+import { assets } from "../assets/assets";
 import Loading from "../components/Loading";
 import { ArrowRightIcon, ClockIcon } from "lucide-react";
 import isoTimeFormat from "../lib/isoTimeFormat";
@@ -61,18 +61,24 @@ const SeatLayout = () => {
   };
 
   const renderSeats = (row, count = 9) => (
-    <div key={row} className="flex gap-2 mt-2">
-      <div className="flex flex-wrap items-center justify-center gap-2">
+    <div key={row} className="flex justify-between gap-2 mt-2">
+      <div className="flex flex-wrap justify-center gap-1.5 md:gap-2">
         {Array.from({ length: count }, (_, i) => {
           const seatId = `${row}${i + 1}`;
-
+          const isSelected = selectedSeats.includes(seatId);
+          const isOccupied = occupiedSeats.includes(seatId);
           return (
             <button
               key={seatId}
               onClick={() => handleSeatClick(seatId)}
-              className={`h-8 w-8 rounded border border-primary/60 cursor-pointer 
-                ${selectedSeats.includes(seatId) && "bg-primary text-white"}
-                ${occupiedSeats.includes(seatId) && "opacity-50"}`}
+              className={`h-7 w-7 md:h-8 md:w-8 rounded border border-primary/60 text-xs transition-colors cursor-pointer
+                ${isSelected ? "bg-primary text-white" : ""}
+                ${
+                  isOccupied
+                    ? "bg-primary-dull opacity-50"
+                    : " hover:bg-primary/20"
+                }
+              `}
             >
               {seatId}
             </button>
@@ -141,21 +147,27 @@ const SeatLayout = () => {
   return show ? (
     <div className="flex flex-col md:flex-row px-6 md:px-16 lg:px-40 py-30 md:pt-50">
       {/* Avaliable Timing */}
-      <div className="w-60 bg-primary/10 border border-primary/20 rounded-lg py-10 h-max md:sticky md:top-30">
-        <p className="text-lg font-semibold px-6">Available Timings</p>
-        <div className="mt-5 space-y-1">
-          {show.dateTime[date].map((item) => (
+      <div className="w-full md:w-60 bg-primary/10 border border-primary/20 rounded-lg py-10 h-max md:top-30">
+        <p className=" text-lg px-6 font-semibold">
+          Movie:{" "}
+          <span className="text-xl text-primary font-bold">
+            {show.movie.title}
+          </span>
+        </p>
+        <p className="text-lg font-semibold px-6 text-center md:text-left">
+          Available Timings for: <span className=" text-primary">{date}</span>
+        </p>
+        <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-col gap-2 justify-items-center px-4 md:px-0 md:space-y-1">
+          {show.dateTime[date]?.map((item) => (
             <div
               key={item.time}
-              onClick={() => {
-                setSelectedTime(item);
-              }}
-              className={`flex items-center gap-2 px-6 py-2 w-max rounded-r-md cursor-pointer transition 
-            ${
-              selectedTime?.time === item.time
-                ? "bg-primary"
-                : "hover:bg-primary/20"
-            }`}
+              onClick={() => setSelectedTime(item)}
+              className={`flex items-center justify-center gap-2 w-full md:w-max md:rounded-r-md px-4 py-2 cursor-pointer transition rounded-md
+                ${
+                  selectedTime?.time === item.time
+                    ? "bg-primary text-white"
+                    : "hover:bg-primary/20"
+                }`}
             >
               <ClockIcon className="w-5 h-5" />
               <p className="text-md">{isoTimeFormat(item.time)}</p>
@@ -165,27 +177,44 @@ const SeatLayout = () => {
       </div>
 
       {/* Seat Layout */}
-      <div className="relative flex-1 flex flex-col items-center max-md:mt-16">
+      <div className="relative flex-1 flex flex-col items-center max-md:mt-26">
         <BlurCircle top="-100px" left="-100px" />
-        <BlurCircle bottom="0" right="-100px" />
+        <BlurCircle bottom="0" right="0px" />
         <h1 className="text-2xl font-semibold mb-4">Select your seat</h1>
-        <img src={assets.screenImage} alt="Screen Image" />
-        <p className="text-gray-400 text-sm mb-6">SCREEN SIDE</p>
+        <img
+          src={assets.screenImage}
+          alt="Screen"
+          className="w-full max-w-md"
+        />
+        <p className="text-gray-400 text-sm mb-6">SCREEN THIS WAY</p>
 
-        <div className="flex flex-col items-center mt-10 text-xs text-gray-300">
-          <div className="grid grid-cols md:grid-cols-1 gap-8 md:gap-2 mb-6">
+        <div className="flex flex-col items-center mt-6 text-xs text-gray-300 w-full px-2">
+          <div className="flex flex-col items-center mb-4 md:mb-6">
             {groupRows[0].map((row) => renderSeats(row))}
           </div>
-          <div className="grid grid-cols-2 gap-11">
-            {groupRows.slice(1).map((group, index) => (
-              <div key={index}>{group.map((row) => renderSeats(row))}</div>
-            ))}
+
+          <div className="flex flex-col md:flex-row items-start w-full justify-center gap-4 md:gap-12 mb-4 md:mb-6">
+            <div className="flex flex-col items-center w-full md:w-auto">
+              {groupRows[1].map((row) => renderSeats(row))}
+            </div>
+            <div className="flex flex-col items-center w-full md:w-auto">
+              {groupRows[2].map((row) => renderSeats(row))}
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row items-start w-full justify-center gap-4 md:gap-12">
+            <div className="flex flex-col items-center w-full md:w-auto">
+              {groupRows[3].map((row) => renderSeats(row))}
+            </div>
+            <div className="flex flex-col items-center w-full md:w-auto">
+              {groupRows[4].map((row) => renderSeats(row))}
+            </div>
           </div>
         </div>
 
         <button
           onClick={bookTickets}
-          className="flex items-center gap-1 mt-20 px-10 py-3 text-sm bg-primary hover:bg-primary-dull 
+          className="flex items-center gap-1 mt-20  px-10 py-3 text-sm bg-primary hover:bg-primary-dull 
           transition rounded-full font-medium cursor-pointer active:scale-95"
         >
           Proceed to Checkout
