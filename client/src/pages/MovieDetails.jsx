@@ -62,6 +62,21 @@ const MovieDetails = () => {
     }
   };
 
+  const isFavorite = favoriteMovies.some((movie) => movie._id === id);
+
+  const FavoriteButton = ({ className = "", iconSize = "w-5 h-5" }) => (
+    <button
+      onClick={handleFavorite}
+      className={`bg-gray-700 p-2.5 rounded-full transition cursor-pointer active:scale-95 ${className}`}
+    >
+      <Heart
+        className={`${iconSize} ${
+          isFavorite ? "fill-primary text-primary" : ""
+        }`}
+      />
+    </button>
+  );
+
   useEffect(() => {
     getShow();
   }, [id]);
@@ -80,18 +95,7 @@ const MovieDetails = () => {
           <p className="text-primary">ENGLISH</p>
           <h1 className="text-4xl font-semibold max-w-96 text-balance flex w-full justify-between items-center">
             {show.movie.title}
-            <button
-              onClick={handleFavorite}
-              className="bg-gray-700 p-2.5 rounded-full transition cursor-pointer active:scale-95 lg:hidden"
-            >
-              <Heart
-                className={`w-7 h-7 ${
-                  favoriteMovies.find((movie) => movie._id === id)
-                    ? "fill-primary text-primary"
-                    : ""
-                }`}
-              />
-            </button>
+            <FavoriteButton className="lg:hidden" iconSize="w-7 h-7" />
           </h1>
           <div className="flex items-center gap-2 text-gray-300">
             <StarIcon className="w-5 h-5 text-primary fill-primary" />
@@ -124,18 +128,7 @@ const MovieDetails = () => {
             >
               Buy Tickets
             </a>
-            <button
-              onClick={handleFavorite}
-              className="bg-gray-700 p-2.5 rounded-full transition cursor-pointer active:scale-95 max-md:hidden"
-            >
-              <Heart
-                className={`w-5 h-5 ${
-                  favoriteMovies.find((movie) => movie._id === id)
-                    ? "fill-primary text-primary"
-                    : ""
-                }`}
-              />
-            </button>
+            <FavoriteButton className="max-md:hidden" />
           </div>
         </div>
       </div>

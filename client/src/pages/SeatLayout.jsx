@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { assets } from "../assets/assets";
 import Loading from "../components/Loading";
+import ButtonLoader from "../components/ButtonLoader";
 import { ArrowRightIcon, ClockIcon } from "lucide-react";
 import isoTimeFormat from "../lib/isoTimeFormat";
 import BlurCircle from "../components/BlurCircle";
@@ -27,6 +28,7 @@ const SeatLayout = () => {
   const [selectedTime, setSelectedTime] = useState(null);
   const [show, setShow] = useState(null);
   const [occupiedSeats, setOccupiedSeats] = useState([]);
+  const [bookingLoading, setBookingLoading] = useState(false);
 
   const getShow = async () => {
     try {
@@ -112,6 +114,8 @@ const SeatLayout = () => {
         return toast.error("Please select a time and seats");
       }
 
+      setBookingLoading(true);
+
       const { data } = await axios.post(
         "/api/booking/create",
         {
@@ -130,6 +134,8 @@ const SeatLayout = () => {
       }
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setBookingLoading(false);
     }
   };
 
@@ -148,7 +154,7 @@ const SeatLayout = () => {
     <div className="flex flex-col md:flex-row px-6 md:px-16 lg:px-40 py-30 md:pt-50">
       {/* Avaliable Timing */}
       <div className="w-full md:w-60 bg-primary/10 border border-primary/20 rounded-lg py-10 h-max md:top-30">
-        <p className=" text-lg px-6 font-semibold">
+        <p className=" text-lg px-6 md:text-left text-center font-semibold">
           Movie:{" "}
           <span className="text-xl text-primary font-bold">
             {show.movie.title}
@@ -214,11 +220,18 @@ const SeatLayout = () => {
 
         <button
           onClick={bookTickets}
-          className="flex items-center gap-1 mt-20  px-10 py-3 text-sm bg-primary hover:bg-primary-dull 
-          transition rounded-full font-medium cursor-pointer active:scale-95"
+          disabled={bookingLoading}
+          className="flex items-center gap-2 mt-20 px-10 py-3 text-sm bg-primary hover:bg-primary-dull 
+    transition rounded-full font-medium cursor-pointer active:scale-95 disabled:opacity-50"
         >
-          Proceed to Checkout
-          <ArrowRightIcon strokeWidth={3} className="w-4 h-4" />
+          {bookingLoading ? (
+            <ButtonLoader size={18} />
+          ) : (
+            <>
+              Proceed to Checkout
+              <ArrowRightIcon strokeWidth={3} className="w-4 h-4" />
+            </>
+          )}
         </button>
       </div>
     </div>
