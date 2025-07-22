@@ -3,6 +3,8 @@ import { useAppContext } from "../context/AppContext";
 import { StarIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import ButtonLoader from "../components/ButtonLoader";
+import Loading from "../components/Loading";
+import BlurCircle from "../components/BlurCircle";
 
 const FeedbackForm = () => {
   const { axios, user, getToken } = useAppContext();
@@ -10,6 +12,8 @@ const FeedbackForm = () => {
   const [hoverRating, setHoverRating] = useState(0);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  if (!user) return <Loading />;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,13 +35,17 @@ const FeedbackForm = () => {
       setRating(0);
       setMessage("");
       toast.success(data.message);
-      setLoading(false);
     } catch (error) {
       console.error("Error submitting feedback:", error);
+      toast.error("Something went wrong. Try again.");
+    } finally {
+      setLoading(false);
     }
   };
   return (
     <div className="relative my-40 mb-60 w-full max-md:w-[85%] max-w-xl mx-auto border bg-primary/10 border-primary/20 rounded-lg p-8">
+      <BlurCircle bottom="-100px" />
+      <BlurCircle top="0" right="-200px" />
       <h1 className="text-center text-2xl font-semibold underline text-primary mb-6">
         Share Your Experience
       </h1>
@@ -78,7 +86,7 @@ const FeedbackForm = () => {
           <textarea
             rows={5}
             placeholder="Write your thoughts here..."
-            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white resize-none"
+            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white resize-none mt-2"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           ></textarea>
