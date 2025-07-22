@@ -19,6 +19,8 @@ import { SignIn } from "@clerk/clerk-react";
 import Loading from "./components/Loading";
 import Upcoming from "./pages/Upcoming";
 import UpcomingMovieDetails from "./pages/UpcomingMovieDetails";
+import ListFeedbacks from "./pages/admin/ListFeedbacks";
+import FeedbackForm from "./pages/FeedbackForm";
 
 const App = () => {
   const isAdminRoute = useLocation().pathname.startsWith("/admin");
@@ -39,6 +41,7 @@ const App = () => {
         <Route path="/my-bookings" element={<MyBooking />} />
         <Route path="/loading/:nextUrl" element={<Loading />} />
         <Route path="/favorite" element={<Favorite />} />
+        <Route path="/feedback" element={<FeedbackForm />} />
         <Route
           path="/admin/*"
           element={
@@ -55,6 +58,7 @@ const App = () => {
           <Route path="add-shows" element={<AddShows />} />
           <Route path="list-shows" element={<ListShows />} />
           <Route path="list-bookings" element={<ListBookings />} />
+          <Route path="feedbacks" element={<ListFeedbacks />} />
         </Route>
       </Routes>
       {!isAdminRoute && <Footer />}

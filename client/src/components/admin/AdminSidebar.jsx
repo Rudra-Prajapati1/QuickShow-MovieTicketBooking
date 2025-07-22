@@ -1,7 +1,9 @@
 import {
+  icons,
   LayoutDashboardIcon,
   ListCollapseIcon,
   ListIcon,
+  MessageCircle,
   PlusSquareIcon,
 } from "lucide-react";
 import React from "react";
@@ -24,6 +26,7 @@ const AdminSidebar = () => {
       path: "/admin/list-bookings",
       icon: ListCollapseIcon,
     },
+    { name: "Feedbacks", path: "/admin/feedbacks", icon: MessageCircle },
   ];
 
   return (

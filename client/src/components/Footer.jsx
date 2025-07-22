@@ -56,13 +56,15 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a href="#">About us</a>
-              </li>
-              <li>
-                <a href="#">Contact us</a>
-              </li>
-              <li>
-                <a href="#">Privacy policy</a>
+                <Link
+                  onClick={() => {
+                    scrollTo(0, 0);
+                    setIsOpen(false);
+                  }}
+                  to="/feedback"
+                >
+                  Give Feedback
+                </Link>
               </li>
             </ul>
           </div>
@@ -70,7 +72,12 @@ const Footer = () => {
             <h2 className="font-semibold mb-5">Get in touch</h2>
             <div className="text-sm space-y-2">
               <p>+91 7567111212 </p>
-              <p>prajaptirudra817@gmail.com</p>
+              <a
+                href="mailto:prajaptirudra817@gmail.com"
+                className="text-primary underline"
+              >
+                prajaptirudra817@gmail.com
+              </a>
             </div>
           </div>
         </div>

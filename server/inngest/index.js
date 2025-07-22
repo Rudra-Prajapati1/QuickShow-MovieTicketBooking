@@ -129,6 +129,7 @@ const sendBookingConfirmationEmail = inngest.createFunction(
                 }<br/>
                 <strong>Total Amount : </strong> $${booking.amount}
               </p>
+              <a href="rjp-quickshow.netlify.app">rjp-quickshow.netlify.app<a>
               <p>Enjoy the show! 🍿🥤</p>
               <p>Thanks for booking with us!<br/> - RJP's QuickShow Team</p>
             </div>`,
@@ -244,6 +245,7 @@ const sendNewShowNotifications = inngest.createFunction(
           <p>We've have added a new show to our library:</p>
           <h3 style="color: #F84565;">"${movieTitle}"</h3>
           <p>Visit our website</p>
+          <a href="rjp-quickshow.netlify.app">rjp-quickshow.netlify.app<a>
           <br />
           <p>Thanks, <br/> RJP's QuickShow Team</p>
         </div>
