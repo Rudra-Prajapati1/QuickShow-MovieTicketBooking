@@ -45,7 +45,7 @@ const FeedbackForm = () => {
   return (
     <div className="relative my-40 mb-60 w-full max-md:w-[85%] max-w-xl mx-auto border bg-primary/10 border-primary/20 rounded-lg p-8">
       <BlurCircle bottom="-100px" />
-      <BlurCircle top="0" right="-200px" />
+      <BlurCircle top="0" />
       <h1 className="text-center text-2xl font-semibold underline text-primary mb-6">
         Share Your Experience
       </h1>
