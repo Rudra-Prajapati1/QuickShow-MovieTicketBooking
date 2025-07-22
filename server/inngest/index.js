@@ -129,7 +129,6 @@ const sendBookingConfirmationEmail = inngest.createFunction(
                 }<br/>
                 <strong>Total Amount : </strong> $${booking.amount}
               </p>
-              <a href="rjp-quickshow.netlify.app">rjp-quickshow.netlify.app<a>
               <p>Enjoy the show! 🍿🥤</p>
               <p>Thanks for booking with us!<br/> - RJP's QuickShow Team</p>
             </div>`,
@@ -205,6 +204,7 @@ const sendShowReminders = inngest.createFunction(
               timeZone: "Asia/Kolkata",
             })}</strong>.</p>
                 <p>It starts in approximately <strong>8 hours</strong> - make sure you're ready!</p><br />
+                <a href="rjp-quickshow.netlify.app">rjp-quickshow.netlify.app<a>
                 <p>Enjoy the show!<br/> RJP's QuickShow Team</p>
                 </div>
               `,
