@@ -6,7 +6,7 @@ import { ArrowRight } from "lucide-react";
 import UpcomingMovieCard from "./UpcomingMovieCard";
 import Loading from "./Loading";
 import useWindowWidth from "../hooks/useWindowWidth";
-import SkeletonCard from "./skeletonCard";
+import SkeletonCard from "./SkeletonCard";
 
 const UpcomingFeaturedSection = () => {
   const navigate = useNavigate();

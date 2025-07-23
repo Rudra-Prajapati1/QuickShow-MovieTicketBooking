@@ -5,7 +5,7 @@ import BlurCircle from "./BlurCircle";
 import MovieCard from "./MovieCard";
 import { useAppContext } from "../context/AppContext";
 import useWindowWidth from "../hooks/useWindowWidth";
-import SkeletonCard from "./skeletonCard";
+import SkeletonCard from "./SkeletonCard";
 import Loading from "./Loading";
 
 const FeaturedSection = () => {
