@@ -10,9 +10,17 @@ import Loading from "../components/Loading";
 import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
 import TrailerSection from "../components/TrailerSection";
+import useWindowWidth from "../hooks/useWindowWidth";
 
 const MovieDetails = () => {
   const navigate = useNavigate();
+  const width = useWindowWidth();
+
+  let sliceCount = 4;
+  if (width >= 1024 && width < 1536) {
+    // lg (≥1024) and xl (<1536)
+    sliceCount = 3;
+  }
 
   const { id } = useParams();
   const [show, setShow] = useState(null);
@@ -112,7 +120,7 @@ const MovieDetails = () => {
             {show.movie.release_date.split("-").join("/")}
           </p>
 
-          <div className="flex items-center flex-wrap gap-4 mt-4">
+          <div className="flex items-center flex-wrap gap-4 mt-4 lg:gap-3 xl:gap-4">
             <a
               href="#trailer"
               className="flex items-center gap-2 px-7 py-3 text-sm bg-gray-800 hover:bg-gray-900 transition 
@@ -154,10 +162,10 @@ const MovieDetails = () => {
       <TrailerSection id={id} />
 
       <p className="text-xl font-medium mt-20 mb-8">You May Also Like</p>
-      <div className="flex flex-wrap max-sm:justify-center gap-9">
+      <div className="flex flex-wrap max-sm:justify-center gap-9 ">
         {shows
           .filter((movie) => movie._id !== id)
-          .slice(0, 4)
+          .slice(0, sliceCount)
           .map((movie, index) => (
             <MovieCard key={index} movie={movie} />
           ))}

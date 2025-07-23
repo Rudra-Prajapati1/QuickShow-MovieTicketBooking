@@ -68,9 +68,9 @@ const Footer = () => {
                       toast.error("You need to login/signup first");
                     }
                   }}
-                  className="cursor-pointer"
+                  className="cursor-pointer whitespace-nowrap"
                 >
-                  Give Feedback
+                  <span className="max-md:hidden">Give</span> Feedback
                 </button>
               </li>
             </ul>

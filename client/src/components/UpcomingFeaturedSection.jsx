@@ -5,10 +5,17 @@ import BlurCircle from "./BlurCircle";
 import { ArrowRight } from "lucide-react";
 import UpcomingMovieCard from "./UpcomingMovieCard";
 import Loading from "./Loading";
+import useWindowWidth from "../hooks/useWindowWidth";
 
 const UpcomingFeaturedSection = () => {
   const navigate = useNavigate();
+  const width = useWindowWidth();
 
+  let sliceCount = 4;
+  if (width >= 1024 && width < 1536) {
+    // lg (≥1024) and xl (<1536)
+    sliceCount = 3;
+  }
   const { upcomingMovies, loading } = useAppContext();
 
   if (loading || upcomingMovies.length === 0) {
@@ -32,7 +39,7 @@ const UpcomingFeaturedSection = () => {
       </div>
 
       <div className="flex flex-wrap max-sm:justify-center gap-9 mt-8">
-        {upcomingMovies.slice(0, 4).map((moive) => (
+        {upcomingMovies.slice(0, sliceCount).map((moive) => (
           <UpcomingMovieCard key={moive.id} movie={moive} />
         ))}
       </div>

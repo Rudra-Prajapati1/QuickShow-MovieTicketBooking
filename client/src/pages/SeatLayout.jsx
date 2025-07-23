@@ -64,7 +64,7 @@ const SeatLayout = () => {
 
   const renderSeats = (row, count = 9) => (
     <div key={row} className="flex justify-between gap-2 mt-2">
-      <div className="flex flex-wrap justify-center gap-1.5 md:gap-2">
+      <div className="flex xl:flex-nowrap 2xl:flex-wrap flex-wrap justify-center gap-1.5 md:gap-1.5">
         {Array.from({ length: count }, (_, i) => {
           const seatId = `${row}${i + 1}`;
           const isSelected = selectedSeats.includes(seatId);
@@ -153,7 +153,7 @@ const SeatLayout = () => {
   return show ? (
     <div className="flex flex-col md:flex-row px-6 md:px-16 lg:px-40 py-30 md:pt-50">
       {/* Avaliable Timing */}
-      <div className="w-full md:w-60 bg-primary/10 border border-primary/20 rounded-lg py-10 h-max md:top-30">
+      <div className="w-full md:w-60 bg-primary/10 border border-primary/20 rounded-lg py-10 h-max md:top-30 ">
         <p className=" text-lg px-6 md:text-left text-center font-semibold">
           Movie:{" "}
           <span className="text-xl text-primary font-bold">

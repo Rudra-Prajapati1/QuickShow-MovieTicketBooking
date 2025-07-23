@@ -5,9 +5,17 @@ import BlurCircle from "./BlurCircle";
 import MovieCard from "./MovieCard";
 import { useAppContext } from "../context/AppContext";
 import Loading from "./Loading";
+import useWindowWidth from "../hooks/useWindowWidth";
 
 const FeaturedSection = () => {
   const navigate = useNavigate();
+  const width = useWindowWidth();
+
+  let sliceCount = 4;
+  if (width >= 1024 && width < 1536) {
+    // lg (≥1024) and xl (<1536)
+    sliceCount = 3;
+  }
 
   const { shows, loading } = useAppContext();
 
@@ -33,7 +41,7 @@ const FeaturedSection = () => {
       </div>
 
       <div className="flex flex-wrap max-sm:justify-center gap-9 mt-8 ">
-        {shows.slice(0, 4).map((show) => (
+        {shows.slice(0, sliceCount).map((show) => (
           <MovieCard key={show._id} movie={show} />
         ))}
       </div>
