@@ -8,7 +8,7 @@ const Upcoming = () => {
   const { upcomingMovies, loading } = useAppContext();
 
   if (loading) {
-    <Loading />;
+    return <Loading />;
   }
 
   return upcomingMovies.length > 0 ? (

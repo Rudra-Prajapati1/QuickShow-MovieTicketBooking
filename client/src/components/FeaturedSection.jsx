@@ -4,8 +4,9 @@ import { useNavigate } from "react-router-dom";
 import BlurCircle from "./BlurCircle";
 import MovieCard from "./MovieCard";
 import { useAppContext } from "../context/AppContext";
-import Loading from "./Loading";
 import useWindowWidth from "../hooks/useWindowWidth";
+import SkeletonCard from "./skeletonCard";
+import Loading from "./Loading";
 
 const FeaturedSection = () => {
   const navigate = useNavigate();
@@ -19,11 +20,17 @@ const FeaturedSection = () => {
 
   const { shows, loading } = useAppContext();
 
-  if (loading || shows.length === 0) {
-    return <Loading />;
+  if (loading) {
+    return (
+      <div className="flex flex-wrap gap-9 mt-8 px-6 md:px-16 lg:px-24 xl:px-44 pt-40">
+        {Array.from({ length: sliceCount }).map((_, i) => (
+          <SkeletonCard key={i} />
+        ))}
+      </div>
+    );
   }
 
-  return (
+  return shows.length > 0 ? (
     <div className="px-6 md:px-16 lg:px-24 xl:px-44 overflow-hidden">
       <div className="relative flex items-center justify-between pt-20 pb-10">
         <BlurCircle top="0" right="-80px" />
@@ -58,6 +65,8 @@ const FeaturedSection = () => {
         </button>
       </div>
     </div>
+  ) : (
+    <Loading />
   );
 };
 

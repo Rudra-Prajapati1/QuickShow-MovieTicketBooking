@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 import UpcomingMovieCard from "./UpcomingMovieCard";
 import Loading from "./Loading";
 import useWindowWidth from "../hooks/useWindowWidth";
+import SkeletonCard from "./skeletonCard";
 
 const UpcomingFeaturedSection = () => {
   const navigate = useNavigate();
@@ -18,10 +19,17 @@ const UpcomingFeaturedSection = () => {
   }
   const { upcomingMovies, loading } = useAppContext();
 
-  if (loading || upcomingMovies.length === 0) {
-    return <Loading />;
+  if (loading) {
+    return (
+      <div className="flex flex-wrap gap-9 mt-8 px-6 md:px-16 lg:px-24 xl:px-44 pt-40">
+        {Array.from({ length: sliceCount }).map((_, i) => (
+          <SkeletonCard key={i} />
+        ))}
+      </div>
+    );
   }
-  return (
+
+  return upcomingMovies.length > 0 ? (
     <div className="px-6 md:px-16 lg:px-24 xl:px-44 overflow-hidden">
       <div className="relative flex items-center justify-between pt-20 pb-10">
         <BlurCircle top="130px" left="50px" />
@@ -56,6 +64,8 @@ const UpcomingFeaturedSection = () => {
         </button>
       </div>
     </div>
+  ) : (
+    <Loading />
   );
 };
 
