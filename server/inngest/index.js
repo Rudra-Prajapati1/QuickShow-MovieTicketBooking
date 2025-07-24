@@ -271,7 +271,7 @@ const addDailyMovieShows = inngest.createFunction(
       return await Movie.find({}).select("_id").lean();
     });
 
-    const showHours = [12, 15, 18, 21]; // 12 PM, 3 PM, 6 PM, 9 PM IST
+    const showHours = [12, 15, 18, 21, 0]; // 12 PM, 3 PM, 6 PM, 9 PM IST
     const timeZone = "Asia/Kolkata";
 
     let addedCount = 0;
