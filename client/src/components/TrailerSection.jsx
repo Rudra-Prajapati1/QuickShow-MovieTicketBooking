@@ -10,7 +10,7 @@ const TrailerSection = ({ id }) => {
 
   const fetchMovieTrailer = async () => {
     try {
-      const { data } = await axios.get(`api/show/trailer/${id}`);
+      const { data } = await axios.get(`/api/show/trailer/${id}`);
       if (data.success) {
         setTrailerUrl(data.trailer_url);
       }
