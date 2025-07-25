@@ -14,7 +14,6 @@
   "dependencies": {
     "@clerk/express": "^1.7.4",
     "axios": "^1.10.0",
-    "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
     "date-fns-tz": "^3.2.0",
     "dotenv": "^17.0.1",
