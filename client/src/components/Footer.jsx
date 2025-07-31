@@ -83,7 +83,7 @@ const Footer = () => {
                 href="mailto:prajaptirudra817@gmail.com"
                 className="text-primary underline"
               >
-                prajaptirudra817@gmail.com
+                prajapatirudra817@gmail.com
               </a>
             </div>
           </div>
