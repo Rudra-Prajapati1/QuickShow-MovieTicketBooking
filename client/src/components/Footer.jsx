@@ -80,7 +80,7 @@ const Footer = () => {
             <div className="text-sm space-y-2">
               <p>+91 7567111212 </p>
               <a
-                href="mailto:prajaptirudra817@gmail.com"
+                href="mailto:prajapatirudra817@gmail.com"
                 className="text-primary underline"
               >
                 prajapatirudra817@gmail.com
