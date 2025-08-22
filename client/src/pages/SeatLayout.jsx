@@ -77,9 +77,10 @@ const SeatLayout = () => {
                 ${isSelected ? "bg-primary text-white" : ""}
                 ${
                   isOccupied
-                    ? "bg-primary-dull opacity-50"
-                    : " hover:bg-primary/20"
+                    ? "bg-primary-dull opacity-50 cursor-not-allowed"
+                    : ""
                 }
+                ${!isSelected && !isOccupied ? "hover:bg-primary/20" : ""}
               `}
             >
               {seatId}
