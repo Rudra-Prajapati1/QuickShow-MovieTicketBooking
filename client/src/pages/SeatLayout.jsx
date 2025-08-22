@@ -80,7 +80,7 @@ const SeatLayout = () => {
                     ? "bg-primary-dull opacity-50 cursor-not-allowed"
                     : ""
                 }
-                ${!isSelected && !isOccupied ? "hover:bg-primary/20" : ""}
+                ${!isSelected && !isOccupied ? "hover:bg-primary/30" : ""}
               `}
             >
               {seatId}
